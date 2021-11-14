@@ -1,0 +1,23 @@
+{
+  "name": "auto-renew-subscription",
+  "version": "1.0.0",
+  "description": "Readme =====",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ishuen/auto-renew-subscription.git"
+  },
+  "author": "ishuen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ishuen/auto-renew-subscription/issues"
+  },
+  "homepage": "https://github.com/ishuen/auto-renew-subscription#readme",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "ws": "^8.2.3"
+  }
+}
