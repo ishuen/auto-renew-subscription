@@ -5,8 +5,16 @@
   "description": "Readme =====",
   "main": "src/index.js",
   "scripts": {
+    "prepare": "husky install",
+    "format": "prettier --write .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --es-module-specifier-resolution=node src/index.js"
+  },
+  "lint-staged": {
+    "**/*.js": [
+      "prettier --write",
+      "eslint --fix"
+    ]
   },
   "repository": {
     "type": "git",
@@ -24,6 +32,10 @@
   },
   "devDependencies": {
     "eslint": "^8.2.0",
-    "eslint-config-google": "^0.14.0"
+    "eslint-config-google": "^0.14.0",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.0.2",
+    "precise-commits": "^1.0.2",
+    "prettier": "^2.4.1"
   }
 }

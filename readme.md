@@ -1,5 +1,4 @@
-Readme
-=====
+# Readme
 
 Given a websocket stream with 3 constraints for the client side:
 
@@ -12,4 +11,3 @@ This project (auto-renew-subscription) aims to implement a mechanism to automati
 ### Data Source
 
 [Binance Spot Market User Data Stream](https://binance-docs.github.io/apidocs/spot/en/#user-data-streams)
-
