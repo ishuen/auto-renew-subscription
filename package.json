@@ -1,10 +1,12 @@
 {
   "name": "auto-renew-subscription",
   "version": "1.0.0",
+  "type": "module",
   "description": "Readme =====",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --es-module-specifier-resolution=node src/index.js"
   },
   "repository": {
     "type": "git",
@@ -19,5 +21,9 @@
   "dependencies": {
     "axios": "^0.24.0",
     "ws": "^8.2.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.2.0",
+    "eslint-config-google": "^0.14.0"
   }
 }
