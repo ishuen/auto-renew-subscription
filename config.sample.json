@@ -1,4 +1,4 @@
 {
-  "apiKey": "",
-  "secretKey": ""
+  "baseUrl": "https://api.binance.com",
+  "apiKey": ""
 }

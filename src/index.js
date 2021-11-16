@@ -1,1 +1,3 @@
-console.log("index");
+import {getListenKey} from './userData.js';
+
+getListenKey();
