@@ -1,3 +1,5 @@
-import {getListenKey} from './userData.js';
+import {getListenKey, userDataStream} from './userData.js';
 
-getListenKey();
+getListenKey()
+    .then((key) => userDataStream(key))
+    .catch((e) => console.log());
