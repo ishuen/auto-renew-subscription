@@ -12,7 +12,7 @@ export const getListenKey = () => {
   return promise.then((response) => response.data.listenKey);
 };
 
-export const userDataStream = (listenKey) => {
+export const subscribeUserData = (listenKey) => {
   const wsRef = {};
   wsRef.closeInitiated = false;
   const initConnect = () => {
@@ -49,4 +49,12 @@ export const userDataStream = (listenKey) => {
   };
   initConnect();
   return wsRef;
+};
+
+export const unsubscribe = (wsRef) => {
+  if (!wsRef || !wsRef.ws) console.log('No connection to close.');
+  else {
+    wsRef.closeInitiated = true;
+    wsRef.ws.close();
+  }
 };
