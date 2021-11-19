@@ -22,3 +22,9 @@ node --experimental-json-modules src/index.js
 ```
 
 The option to enable the experimental feature is required since the config file is written in json format.
+
+### Data Storage
+
+There are 4 types of events receivable: `outboundAccountPosition`, `balanceUpdate`, `executionReport`, and `listStatus` (if OCO orders are involved).
+
+It is known that even the same event type may have different object properties due to the difference on the order type. So to ensure the smooth data transition, schemaless noSQL DB may be a good choice for data storage.
