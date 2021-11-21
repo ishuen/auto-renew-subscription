@@ -1,5 +1,6 @@
 {
   "baseUrl": "https://api.binance.com",
   "apiKey": "",
-  "wsUrl": "wss://stream.binance.com:9443"
+  "wsUrl": "wss://stream.binance.com:9443",
+  "dbUri": ""
 }

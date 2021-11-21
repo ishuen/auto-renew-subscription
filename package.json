@@ -28,6 +28,7 @@
   "homepage": "https://github.com/ishuen/auto-renew-subscription#readme",
   "dependencies": {
     "axios": "^0.24.0",
+    "mongodb": "^4.2.0",
     "ws": "^8.2.3"
   },
   "devDependencies": {
