@@ -28,3 +28,22 @@ The option to enable the experimental feature is required since the config file 
 There are 4 types of events receivable: `outboundAccountPosition`, `balanceUpdate`, `executionReport`, and `listStatus` (if OCO orders are involved).
 
 It is known that even the same event type may have different object properties due to the difference on the order type. So to ensure the smooth data transition, schemaless noSQL DB may be a good choice for data storage.
+
+#### Collections
+
+The following collections store the records from the stream without modification involved.
+
+1. accountUpdates -- handles `outboundAccountPosition` event
+2. balanceUpdates -- handles `balanceUpdate` event
+3. orderUpdates -- handles `executionReport` and `listStatus` event
+
+In addition, there is another collection, `accountStatus`, handling the latest account status.
+
+```
+{
+	"asset": "ETH",
+	"amount": 1,
+	"averageEntryPriceBUSD": 4102.782,
+	"lastUpdateTime": 1637582145000
+}
+```
