@@ -33,7 +33,24 @@ export const subscribeUserData = (listenKey) => {
       console.log(`Error: ${err}`);
     });
 
-    ws.on('message', (message) => console.log(message));
+    ws.on('message', (message) => {
+      console.log(message);
+      switch (message.e) {
+        case outboundAccountPosition:
+          // save to accountUpdates
+          break;
+        case balanceUpdate:
+          // save to balanceUpdates
+          break;
+        case executionReport:
+          // save to orderUpdates
+          // when status = FILLED -> account status update
+          break;
+        case listStatus:
+          // save to orderUpdates
+          break;
+      }
+    });
 
     ws.on('close', (closeEventCode, reason) => {
       if (!wsRef.closeInitiated) {
