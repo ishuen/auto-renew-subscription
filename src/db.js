@@ -10,17 +10,15 @@ const ACCOUNT_STATUS = 'accountStatus';
 /**
  * Temp method to test db connection
  */
-async function dbtest() {
+export async function connect() {
   const client = new MongoClient(dbUri);
 
   try {
     await client.connect();
-    await listDatabases(client);
   } catch (e) {
     console.error(e);
-  } finally {
-    await client.close();
   }
+  return client;
 }
 
 /**
@@ -28,11 +26,13 @@ async function dbtest() {
  * @param {MongoClient} client A MongoClient
  * @param {Object} accountUpdate The account update event object
  */
-async function insertAccountUpdate(client, accountUpdate) {
-  return await client
+export async function insertAccountUpdate(client, accountUpdate) {
+  const result = await client
       .db(dbName)
       .collection(ACCOUNT_UPDATES)
       .insertOne(accountUpdate);
+  console.log(result);
+  return result;
 }
 
 /**
@@ -40,11 +40,13 @@ async function insertAccountUpdate(client, accountUpdate) {
  * @param {MongoClient} client A MongoClient
  * @param {Object} balanceUpdate The balance update event object
  */
-async function insertBalanceUpdate(client, balanceUpdate) {
-  return await client
+export async function insertBalanceUpdate(client, balanceUpdate) {
+  const result = await client
       .db(dbName)
       .collection(BALANCE_UPDATES)
       .insertOne(balanceUpdate);
+  console.log(result);
+  return result;
 }
 
 /**
@@ -52,11 +54,13 @@ async function insertBalanceUpdate(client, balanceUpdate) {
  * @param {MongoClient} client A MongoClient
  * @param {Object} orderUpdate The order update event object
  */
-async function insertOrderUpdate(client, orderUpdate) {
-  return await client
+export async function insertOrderUpdate(client, orderUpdate) {
+  const result = await client
       .db(dbName)
       .collection(ORDER_UPDATES)
       .insertOne(orderUpdate);
+  console.log(result);
+  return result;
 }
 
 /**
@@ -64,7 +68,7 @@ async function insertOrderUpdate(client, orderUpdate) {
  * @param {MongoClient} client A MongoClient
  * @param {String} asset The name of the coin
  */
-async function findStatusByAsset(client, asset) {
+export async function findStatusByAsset(client, asset) {
   return await client.db(dbName).collection(ACCOUNT_STATUS).findOne({asset});
 }
 
@@ -73,7 +77,7 @@ async function findStatusByAsset(client, asset) {
  * @param {MongoClient} client A MongoClient
  * @param {object} orderUpdate An object includes asset, amount, avg entry price
  */
-async function upsertAccountStatus(client, orderUpdate) {
+export async function upsertAccountStatus(client, orderUpdate) {
   const result = await client
       .db(dbName)
       .collection(dbName)
@@ -93,11 +97,12 @@ async function upsertAccountStatus(client, orderUpdate) {
   }
 }
 
-dbtest().catch(console.error);
+// dbtest().catch(console.error);
 
 // TODO: refactor export (the definition below is to pass the linter rule)
-module.exports.insertAccountUpdate = insertAccountUpdate;
-module.exports.insertBalanceUpdate = insertBalanceUpdate;
-module.exports.insertOrderUpdate = insertOrderUpdate;
-module.exports.findStatusByAsset = findStatusByAsset;
-module.exports.upsertAccountStatus = upsertAccountStatus;
+// module.exports.connect = connect;
+// module.exports.insertAccountUpdate = insertAccountUpdate;
+// module.exports.insertBalanceUpdate = insertBalanceUpdate;
+// module.exports.insertOrderUpdate = insertOrderUpdate;
+// module.exports.findStatusByAsset = findStatusByAsset;
+// module.exports.upsertAccountStatus = upsertAccountStatus;

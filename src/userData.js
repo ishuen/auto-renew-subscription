@@ -1,6 +1,11 @@
 import * as config from '../config.json';
 import axios from 'axios';
 import WebSocket from 'ws';
+import {
+  insertAccountUpdate,
+  insertBalanceUpdate,
+  insertOrderUpdate,
+} from './db.js';
 
 const {baseUrl, apiKey, wsUrl} = config.default;
 const reconnectDelay = 5000;
@@ -12,7 +17,7 @@ export const getListenKey = () => {
   return promise.then((response) => response.data.listenKey);
 };
 
-export const subscribeUserData = (listenKey) => {
+export const subscribeUserData = (listenKey, client) => {
   const wsRef = {};
   wsRef.closeInitiated = false;
   const initConnect = () => {
@@ -34,20 +39,22 @@ export const subscribeUserData = (listenKey) => {
     });
 
     ws.on('message', (message) => {
-      console.log(message);
+      console.log(message.toString());
+      message = JSON.parse(message.toString());
+      console.log(message.e);
       switch (message.e) {
-        case outboundAccountPosition:
-          // save to accountUpdates
+        case 'outboundAccountPosition':
+          insertAccountUpdate(client, message);
           break;
-        case balanceUpdate:
-          // save to balanceUpdates
+        case 'balanceUpdate':
+          insertBalanceUpdate(client, message);
           break;
-        case executionReport:
-          // save to orderUpdates
+        case 'executionReport':
+          insertOrderUpdate(client, message);
           // when status = FILLED -> account status update
           break;
-        case listStatus:
-          // save to orderUpdates
+        case 'listStatus':
+          insertOrderUpdate(client, message);
           break;
       }
     });
