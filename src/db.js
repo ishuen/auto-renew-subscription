@@ -1,25 +1,10 @@
-import {MongoClient} from 'mongodb';
 import * as config from '../config.json';
-const {dbUri, dbName} = config.default;
+const {dbName} = config.default;
 
 const ACCOUNT_UPDATES = 'accountUpdates';
 const BALANCE_UPDATES = 'balanceUpdates';
 const ORDER_UPDATES = 'orderUpdates';
 const ACCOUNT_STATUS = 'accountStatus';
-
-/**
- * Temp method to test db connection
- */
-export async function connect() {
-  const client = new MongoClient(dbUri);
-
-  try {
-    await client.connect();
-  } catch (e) {
-    console.error(e);
-  }
-  return client;
-}
 
 /**
  * Create a new accountUpdate record

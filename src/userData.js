@@ -41,7 +41,6 @@ export const subscribeUserData = (listenKey, client) => {
     ws.on('message', (message) => {
       console.log(message.toString());
       message = JSON.parse(message.toString());
-      console.log(message.e);
       switch (message.e) {
         case 'outboundAccountPosition':
           insertAccountUpdate(client, message);
