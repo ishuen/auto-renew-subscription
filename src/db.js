@@ -81,13 +81,3 @@ export async function upsertAccountStatus(client, orderUpdate) {
     console.log('No document upserted');
   }
 }
-
-// dbtest().catch(console.error);
-
-// TODO: refactor export (the definition below is to pass the linter rule)
-// module.exports.connect = connect;
-// module.exports.insertAccountUpdate = insertAccountUpdate;
-// module.exports.insertBalanceUpdate = insertBalanceUpdate;
-// module.exports.insertOrderUpdate = insertOrderUpdate;
-// module.exports.findStatusByAsset = findStatusByAsset;
-// module.exports.upsertAccountStatus = upsertAccountStatus;
