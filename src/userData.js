@@ -5,6 +5,8 @@ import {
   insertAccountUpdate,
   insertBalanceUpdate,
   insertOrderUpdate,
+  findStatusByAsset,
+  upsertAccountStatus,
 } from './db.js';
 
 const {baseUrl, apiKey, wsUrl} = config.default;
@@ -50,7 +52,7 @@ export const subscribeUserData = (listenKey, client) => {
           break;
         case 'executionReport':
           insertOrderUpdate(client, message);
-          // when status = FILLED -> account status update
+          accountStatusUpdate(client, message);
           break;
         case 'listStatus':
           insertOrderUpdate(client, message);
@@ -81,3 +83,43 @@ export const unsubscribe = (wsRef) => {
     wsRef.ws.close();
   }
 };
+
+/**
+ * Prepare account status object and update DB
+ * @param {MongoClient} client A MongoClient
+ * @param {object} message A message from stream
+ */
+async function accountStatusUpdate(client, message) {
+  if (message.X !== 'FILLED') return; // Current order status
+  // TODO: get base asset from symbol
+  const base = 'BASE';
+  // TODO: get quote asset from symbol
+  const quote = 'QUOTE';
+  const baseStatus = await findStatusByAsset(client, base);
+  const quoteStatus = await findStatusByAsset(client, quote);
+  const baseObject = {
+    asset: base,
+    lastUpdateTime: Date.now(),
+  };
+  const quoteObject = {
+    asset: quote,
+    lastUpdateTime: Date.now(),
+  };
+  const cost = message.p * message.q;
+  // TODO: calculate cost based on quote asset, not BUSD assumption
+  if (message.S == 'BUY') {
+    baseObject.amount = baseStatus.amount + message.q;
+    baseObject.averageEntryPriceBUSD =
+      (baseStatus.averageEntryPriceBUSD * baseStatus.amount + cost) /
+      baseObject.amount;
+    quoteObject.amount = quoteStatus.amount - cost;
+  } else {
+    baseObject.amount = baseStatus.amount - message.q;
+    quoteObject.amount = quoteStatus.amount + cost;
+    quoteObject.averageEntryPriceBUSD =
+      (quoteStatus.averageEntryPriceBUSD * quoteStatus.amount + cost) /
+      quoteObject.amount;
+  }
+  upsertAccountStatus(client, baseObject);
+  upsertAccountStatus(client, quoteObject);
+}
