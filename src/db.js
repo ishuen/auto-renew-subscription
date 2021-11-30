@@ -76,8 +76,8 @@ export async function upsertAccountStatus(client, orderUpdate) {
           },
           {upsert: true},
       );
-
-  if (result.upsertedCount <= 0) {
+  console.log(result);
+  if (result.upsertedCount <= 0 && result.modifiedCount <= 0) {
     console.log('No document upserted');
   }
 }

@@ -11,6 +11,10 @@ import {
 
 const {baseUrl, apiKey, wsUrl} = config.default;
 const reconnectDelay = 5000;
+const defaultStatus = {
+  amount: 0,
+  averageEntryPriceBUSD: 0,
+};
 
 export const getListenKey = () => {
   const promise = axios.post(`${baseUrl}/api/v3/userDataStream`, null, {
@@ -91,12 +95,19 @@ export const unsubscribe = (wsRef) => {
  */
 async function accountStatusUpdate(client, message) {
   if (message.X !== 'FILLED') return; // Current order status
-  // TODO: get base asset from symbol
-  const base = 'BASE';
-  // TODO: get quote asset from symbol
-  const quote = 'QUOTE';
-  const baseStatus = await findStatusByAsset(client, base);
-  const quoteStatus = await findStatusByAsset(client, quote);
+  const quote = 'BUSD';
+  const symbol = message.s;
+  if (!/BUSD$/.test(symbol)) return; // check if quote asset is BUSD
+  const symbolExtraction = symbol.match(/^([0-9A-Z]+)BUSD$/);
+  const base = symbolExtraction[1];
+  let baseStatus = await findStatusByAsset(client, base);
+  if (!baseStatus) {
+    baseStatus = defaultStatus;
+  }
+  let quoteStatus = await findStatusByAsset(client, quote);
+  if (!quoteStatus) {
+    quoteStatus = defaultStatus;
+  }
   const baseObject = {
     asset: base,
     lastUpdateTime: Date.now(),
@@ -106,7 +117,6 @@ async function accountStatusUpdate(client, message) {
     lastUpdateTime: Date.now(),
   };
   const cost = message.p * message.q;
-  // TODO: calculate cost based on quote asset, not BUSD assumption
   if (message.S == 'BUY') {
     baseObject.amount = baseStatus.amount + message.q;
     baseObject.averageEntryPriceBUSD =

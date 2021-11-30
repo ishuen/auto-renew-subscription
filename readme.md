@@ -47,3 +47,7 @@ In addition, there is another collection, `accountStatus`, handling the latest a
 	"lastUpdateTime": 1637582145000
 }
 ```
+
+### Limitation => TO-DO
+
+So far the accountStatus update feature only supports the symbol which has the quote asset equals BUSD. The future enhancement could be including other quote assets.
