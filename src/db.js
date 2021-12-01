@@ -65,7 +65,7 @@ export async function findStatusByAsset(client, asset) {
 export async function upsertAccountStatus(client, orderUpdate) {
   const result = await client
       .db(dbName)
-      .collection(dbName)
+      .collection(ACCOUNT_STATUS)
       .updateOne(
           {asset: orderUpdate.asset},
           {

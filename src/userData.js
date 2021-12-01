@@ -116,15 +116,15 @@ async function accountStatusUpdate(client, message) {
     asset: quote,
     lastUpdateTime: Date.now(),
   };
-  const cost = message.p * message.q;
+  const cost = Number(message.p) * Number(message.q);
   if (message.S == 'BUY') {
-    baseObject.amount = baseStatus.amount + message.q;
+    baseObject.amount = baseStatus.amount + Number(message.q);
     baseObject.averageEntryPriceBUSD =
       (baseStatus.averageEntryPriceBUSD * baseStatus.amount + cost) /
       baseObject.amount;
     quoteObject.amount = quoteStatus.amount - cost;
   } else {
-    baseObject.amount = baseStatus.amount - message.q;
+    baseObject.amount = baseStatus.amount - Number(message.q);
     quoteObject.amount = quoteStatus.amount + cost;
     quoteObject.averageEntryPriceBUSD =
       (quoteStatus.averageEntryPriceBUSD * quoteStatus.amount + cost) /
