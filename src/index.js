@@ -6,12 +6,11 @@ const KEY_RENEW_TIME = 1000 * 60 * 50; // 50 mins
 const MAX_ITERATION = 11; // 24hr connection limit
 
 /**
- * Main function
+ * handleStream function
+ * @param {MongoClient} client A MongoClient
  */
-async function main() {
-  const client = new MongoClient(dbUri);
-  await client.connect();
-  getListenKey()
+async function handleStream(client) {
+  await getListenKey()
       .then((key) => subscribeUserData(key, client))
       .then((wsRef) => {
         (async function autoRenew() {
@@ -21,9 +20,19 @@ async function main() {
             getListenKey();
           }
           unsubscribe(wsRef);
+          handleStream(client);
         })();
       })
       .catch((e) => console.log());
+}
+
+/**
+ * Main function
+ */
+async function main() {
+  const client = new MongoClient(dbUri);
+  await client.connect();
+  await handleStream(client);
 }
 
 main().catch(console.error);
