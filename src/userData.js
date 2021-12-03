@@ -85,6 +85,7 @@ export const unsubscribe = (wsRef) => {
   else {
     wsRef.closeInitiated = true;
     wsRef.ws.close();
+    console.log('disconnected');
   }
 };
 
