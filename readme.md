@@ -18,6 +18,7 @@ This project (auto-renew-subscription) aims to implement a mechanism to automati
 Before turn on the terminal, copy `config.sample.json` and rename it to `config.json`. After the new config file is created, fill in the api key. If the subscription target is testnet environment, the url for API and websocket should be changed. Please refer to the API document for the corresponding url.
 
 ```
+mkdir ./logs
 npm install
 node --experimental-json-modules src/index.js
 ```

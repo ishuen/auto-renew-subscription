@@ -23,52 +23,54 @@ export const getListenKey = () => {
   return promise.then((response) => response.data.listenKey);
 };
 
-export const subscribeUserData = (listenKey, client) => {
+export const subscribeUserData = (listenKey, client, loggers) => {
   const wsRef = {};
   wsRef.closeInitiated = false;
+  const appLogger = loggers.appLogger;
+  const dbLogger = loggers.dbLogger;
   const initConnect = () => {
     const ws = new WebSocket(`${wsUrl}/ws/${listenKey}`);
     wsRef.ws = ws;
-    console.log('connected');
+    appLogger.info('connected');
 
     ws.on('ping', () => {
-      console.log('Received ping from server');
+      appLogger.info('Received ping from server');
       ws.pong();
     });
 
     ws.on('pong', () => {
-      console.log('Received pong from server');
+      appLogger.info('Received pong from server');
     });
 
     ws.on('error', (err) => {
-      console.log(`Error: ${err}`);
+      appLogger.error(`Error: ${err}`);
     });
 
     ws.on('message', (message) => {
-      console.log(message.toString());
+      appLogger.info(message.toString());
       message = JSON.parse(message.toString());
       switch (message.e) {
         case 'outboundAccountPosition':
-          insertAccountUpdate(client, message);
+          insertAccountUpdate(client, message, dbLogger);
           break;
         case 'balanceUpdate':
-          insertBalanceUpdate(client, message);
+          insertBalanceUpdate(client, message, dbLogger);
           break;
         case 'executionReport':
-          insertOrderUpdate(client, message);
-          accountStatusUpdate(client, message);
+          insertOrderUpdate(client, message, dbLogger);
+          accountStatusUpdate(client, message, dbLogger);
           break;
         case 'listStatus':
-          insertOrderUpdate(client, message);
+          insertOrderUpdate(client, message, dbLogger);
           break;
       }
     });
 
     ws.on('close', (closeEventCode, reason) => {
       if (!wsRef.closeInitiated) {
-        console.log(`Connection close due to ${closeEventCode}: ${reason}.`);
+        appLogger.info(`Connection close due to ${closeEventCode}: ${reason}.`);
         setTimeout(() => {
-          console.log('Reconnect to the server.');
+          appLogger.info('Reconnect to the server.');
           initConnect();
         }, reconnectDelay);
       } else {
@@ -80,12 +82,12 @@ export const subscribeUserData = (listenKey, client) => {
   return wsRef;
 };
 
-export const unsubscribe = (wsRef) => {
-  if (!wsRef || !wsRef.ws) console.log('No connection to close.');
+export const unsubscribe = (wsRef, appLogger) => {
+  if (!wsRef || !wsRef.ws) appLogger.error('No connection to close.');
   else {
     wsRef.closeInitiated = true;
     wsRef.ws.close();
-    console.log('disconnected');
+    appLogger.info('disconnected');
   }
 };
 
@@ -93,8 +95,9 @@ export const unsubscribe = (wsRef) => {
  * Prepare account status object and update DB
  * @param {MongoClient} client A MongoClient
  * @param {object} message A message from stream
+ * @param {Console} logger DB logger
  */
-async function accountStatusUpdate(client, message) {
+async function accountStatusUpdate(client, message, logger) {
   if (message.X !== 'FILLED') return; // Current order status
   const quote = 'BUSD';
   const symbol = message.s;
@@ -131,6 +134,6 @@ async function accountStatusUpdate(client, message) {
       (quoteStatus.averageEntryPriceBUSD * quoteStatus.amount + cost) /
       quoteObject.amount;
   }
-  upsertAccountStatus(client, baseObject);
-  upsertAccountStatus(client, quoteObject);
+  upsertAccountStatus(client, baseObject, logger);
+  upsertAccountStatus(client, quoteObject, logger);
 }
